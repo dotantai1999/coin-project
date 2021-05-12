@@ -1,4 +1,4 @@
-class Block {
+module.exports = class Block {
   constructor(
     index,
     timestamp,
@@ -16,6 +16,4 @@ class Block {
     this.hash = hash;
     this.previousBlockHash = previousBlockHash;
   }
-}
-
-module.exports = Block;
+};

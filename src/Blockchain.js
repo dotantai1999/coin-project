@@ -1,13 +1,15 @@
 const { v4: uuid } = require("uuid");
+const Blockchain = require("./Blockchain");
 const sha256 = require("sha256");
 const Block = require("./Block");
 const currentNodeUrl = process.env.URL || process.argv[3];
 
-class Blockchain {
+module.exports = class Blockchain {
   constructor(socketId = "") {
     this.socketId = socketId;
     this.chain = [];
     this.pendingTransactions = [];
+    this.transactions = [];
     this.currentNodeUrl = currentNodeUrl;
     this.networkNodes = []; // TODO: weird?
     this.createNewBlock(100, "0", "0", []);
@@ -28,6 +30,19 @@ class Blockchain {
     return newBlock;
   }
 
+  createNewBlockWithoutAdd(nonce, previousBlockHash, hash, transactions) {
+    const newBlock = new Block(
+      this.chain.length + 1,
+      Date.now(),
+      new Date().toString(),
+      transactions,
+      nonce,
+      hash,
+      previousBlockHash
+    );
+    return newBlock;
+  }
+
   getLastBlock() {
     return this.chain[this.chain.length - 1];
   }
@@ -36,12 +51,7 @@ class Blockchain {
     const newTransaction = {
       transactionId: uuid().split("-").join(""),
       amount: amount,
-      date:
-        new Date().getDay().toString() +
-        "." +
-        new Date().getMonth().toString() +
-        "." +
-        new Date().getFullYear().toString(),
+      date: new Date(),
       sender: sender,
       recipient: recipient,
     };
@@ -176,6 +186,4 @@ class Blockchain {
       amountArr: amountArr,
     };
   }
-}
-
-module.exports = Blockchain;
+};
